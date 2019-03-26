@@ -14,6 +14,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private EditText editText;
 
+    private static final String TEXT_VIEW = "TextDisplayed";
+    private static final String EDIT_TEXT = "TextInput";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,5 +36,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putCharSequence(TEXT_VIEW, textView.getText());
+        outState.putCharSequence(EDIT_TEXT, editText.getText());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        textView.setText(savedInstanceState.getCharSequence(TEXT_VIEW));
+        editText.setText(savedInstanceState.getCharSequence(EDIT_TEXT));
     }
 }
