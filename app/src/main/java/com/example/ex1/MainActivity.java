@@ -2,7 +2,9 @@ package com.example.ex1;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,25 +62,32 @@ public class MainActivity extends Activity {
                 mAdapter.notifyDataSetChanged();
             }
         });
-
+        SharedPreferences mSharedPreference1 =   PreferenceManager.getDefaultSharedPreferences(this);
+        messageList.clear();
+        int size = mSharedPreference1.getInt(CustomApplicationClass.MESSAGECOUNT, 0);
+        for(int i=0;i<size;i++)
+        {
+            Message messageToAdd = new Message(mSharedPreference1.getString("Status_" + i, null)) ;
+            messageList.add(messageToAdd);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putCharSequence(EDIT_TEXT, editText.getText());
-        outState.putParcelableArrayList("key",(ArrayList<? extends Parcelable>) messageList);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putInt(CustomApplicationClass.MESSAGECOUNT,messageList.size()).apply();
+        for(int i=0;i<messageList.size();i++)
+        {
+            prefs.edit().putString("Status_" + i, messageList.get(i).getMessage()).apply();
+        }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         editText.setText(savedInstanceState.getCharSequence(EDIT_TEXT));
-        List<Message> list = savedInstanceState.getParcelableArrayList("key");
-        for (int i = 0 ; i <  list.size() ; i ++){
-            Message MessageToAdd = list.get(i);
-            messageList.add(MessageToAdd);
-            mAdapter.notifyDataSetChanged();
-        }
     }
 }

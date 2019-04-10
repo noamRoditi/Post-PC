@@ -1,11 +1,17 @@
 package com.example.ex1;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
+@Entity
 public class Message implements Parcelable {
+    @NonNull
     private String message;
-
+    @PrimaryKey
+    private int Location;
     @Override
     public int describeContents() {
         return 0;
