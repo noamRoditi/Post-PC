@@ -9,14 +9,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MessageViewHolder>{
-
+    private FirebaseFirestore db;
     private List<Message> messageList;
 
-    public MyAdapter(List<Message> bookList) {
+    public MyAdapter(List<Message> bookList, FirebaseFirestore db) {
         this.messageList = bookList;
+        this.db = db;
     }
 
     @Override
@@ -53,7 +56,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MessageViewHolder>
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    messageList.remove(getAdapterPosition());
+                                    int postion = getAdapterPosition();
+                                    db.collection("messages")
+                                            .document(messageList.get(postion).getId())
+                                            .delete();
+                                    messageList.remove(postion);
                                     notifyItemRemoved(getAdapterPosition());
                                     notifyItemRangeChanged(getAdapterPosition(),messageList.size());
                                 }
