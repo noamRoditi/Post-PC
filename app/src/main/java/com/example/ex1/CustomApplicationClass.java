@@ -2,39 +2,48 @@
 //
 //import android.app.Application;
 //import android.content.Context;
+//import android.content.Intent;
 //import android.content.SharedPreferences;
 //import android.preference.PreferenceManager;
+//import android.support.annotation.NonNull;
 //import android.util.Log;
 //
+//import com.google.android.gms.tasks.OnCompleteListener;
+//import com.google.android.gms.tasks.Task;
+//import com.google.firebase.firestore.DocumentSnapshot;
+//import com.google.firebase.firestore.FirebaseFirestore;
+//
+//import java.util.Map;
 //import java.util.UUID;
 //
 //public class CustomApplicationClass extends Application {
-//    private static Context appContext;
-//    public static final String MESSAGECOUNT = "MESSAGE_COUNT";
-//    public static final String USER = "USER";
+//    private static Context context;
+//    private FirebaseFirestore db;
 //    @Override
 //    public void onCreate() {
 //        super.onCreate();
-//        appContext = getApplicationContext();
-//        Context context = CustomApplicationClass.getAppContext();
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-//        LogNumOfMessages(prefs);
-//        if(!prefs.contains(USER)) {
-//            createUserUUID(prefs);
-//        }
+//        context = getApplicationContext();
+//        db = FirebaseFirestore.getInstance();
+//        db.collection("defaults").document("user").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if(task.getResult().exists()){
+//                    Intent intent = new Intent(context, MainActivity.class);
+//                    DocumentSnapshot document = task.getResult();
+//                    Map<String, Object> documentData = document.getData();
+//                    String name = (String)documentData.get("name");
+//                    intent.putExtra("name","hello" + name +"!");
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                }else{
+//                    Intent intent = new Intent(context, ConfigureNameActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                }
+//            }
+//        });
 //
-//    }
 //
-//    private void createUserUUID(SharedPreferences prefs) {
-//        String uniqueID = UUID.randomUUID().toString();
-//        prefs.edit().putString(USER , uniqueID).apply();
-//    }
 //
-//    public static Context getAppContext() {
-//        return appContext;
-//    }
-//
-//    public static void LogNumOfMessages(SharedPreferences prefs) {
-//        Log.i("MESSAGE_COUNT", Integer.toString(prefs.getInt(MESSAGECOUNT,0)));
 //    }
 //}

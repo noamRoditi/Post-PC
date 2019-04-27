@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -38,6 +39,7 @@ public class MainActivity extends Activity {
     private static final String EDIT_TEXT = "TextInput";
     private Context context;
     private FirebaseFirestore db;
+    private TextView textView_name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,17 +48,21 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         sendButton = (FloatingActionButton)findViewById(R.id.floatingActionButton);
         editText = (EditText)findViewById(R.id.plain_text_input);
+        textView_name = (TextView) findViewById(R.id.nameView);
         db = FirebaseFirestore.getInstance();
-        mAdapter = new MyAdapter(messageList, db);
+        context = getApplicationContext();
+        mAdapter = new MyAdapter(messageList, db, context);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        context = getApplicationContext();
         mAdapter.notifyDataSetChanged();
-
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            textView_name.setText(extras.getString("name"));
+        }
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
